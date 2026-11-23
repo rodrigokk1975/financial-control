@@ -1,6 +1,6 @@
 # PRD — Controle de Finanças Pessoais (`financial-control`)
 
-> **Status:** Aprovado para execução  
+> **Status:** Concluído (Etapas 0 a 11 finalizadas)  
 > **Tipo:** Aplicação Full-Stack Web (Portfólio — Destaque A)  
 > **Repositório:** `https://github.com/rodrigokk1975/financial-control`
 
@@ -260,10 +260,10 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 1 — Setup do Monorepo, Docker Compose (PostgreSQL) e TypeScript
 - **Objetivo:** Preparar a base do projeto e o banco de dados local containerizado.
 - **Entregáveis:**
-  - [ ] `.gitignore` raiz (Node, Vite, `.env`, volumes, logs).
-  - [ ] `docker-compose.yml` com PostgreSQL 16 + volume persistente + `.env.example`.
-  - [ ] Estrutura inicial de `backend/` (`package.json`, `tsconfig.json`, Express healthcheck `GET /api/health`).
-  - [ ] Estrutura inicial de `frontend/` (Vite + React + TS).
+  - [x] `.gitignore` raiz (Node, Vite, `.env`, volumes, logs).
+  - [x] `docker-compose.yml` com PostgreSQL 16 + volume persistente + `.env.example`.
+  - [x] Estrutura inicial de `backend/` (`package.json`, `tsconfig.json`, Express healthcheck `GET /api/health`).
+  - [x] Estrutura inicial de `frontend/` (Vite + React + TS).
 - **Critério de Aceite:** `docker compose up -d` sobe o PostgreSQL sem erros e `GET /api/health` responde `200 OK`.
 - **Commit:** `chore: setup monorepo structure, docker-compose postgres and typescript`
 
@@ -272,9 +272,9 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 2 — Modelagem com Prisma ORM, Migrations e Seed
 - **Objetivo:** Criar as tabelas relacionais no PostgreSQL via Prisma.
 - **Entregáveis:**
-  - [ ] `backend/prisma/schema.prisma` com modelos `User`, `Account`, `Category`, `Transaction` e enums.
-  - [ ] Primeira migration gerada e aplicada (`npx prisma migrate dev --name init`).
-  - [ ] Script `backend/prisma/seed.ts` populando um usuário demo, contas, categorias e transações de exemplo.
+  - [x] `backend/prisma/schema.prisma` com modelos `User`, `Account`, `Category`, `Transaction` e enums.
+  - [x] Primeira migration gerada e aplicada (`npx prisma migrate dev --name init`).
+  - [x] Script `backend/prisma/seed.ts` populando um usuário demo, contas, categorias e transações de exemplo.
 - **Critério de Aceite:** Migration aplicada com sucesso no PostgreSQL e seed executando de forma idempotente.
 - **Commit:** `feat(db): add prisma schema, initial migration and seed`
 
@@ -283,10 +283,10 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 3 — Autenticação JWT no Backend
 - **Objetivo:** Reaproveitar e integrar o fluxo de autenticação JWT com PostgreSQL + Prisma.
 - **Entregáveis:**
-  - [ ] Endpoints `POST /api/auth/register`, `POST /api/auth/login` e `GET /api/auth/me`.
-  - [ ] Hash de senha com `bcryptjs` e geração/verificação de token com `jsonwebtoken`.
-  - [ ] Middleware `ensureAuthenticated` injetando `req.userId`.
-  - [ ] Validação de payloads com Zod e middleware global de tratamento de erros.
+  - [x] Endpoints `POST /api/auth/register`, `POST /api/auth/login` e `GET /api/auth/me`.
+  - [x] Hash de senha com `bcryptjs` e geração/verificação de token com `jsonwebtoken`.
+  - [x] Middleware `ensureAuthenticated` injetando `req.userId`.
+  - [x] Validação de payloads com Zod e middleware global de tratamento de erros.
 - **Critério de Aceite:** Fluxo completo de cadastro, login e acesso à rota protegida testado e retornando `401` sem token válido.
 - **Commit:** `feat(auth): implement JWT authentication and user routes`
 
@@ -295,9 +295,9 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 4 — CRUD de Contas e Categorias
 - **Objetivo:** Implementar o gerenciamento das entidades-base com isolamento por usuário.
 - **Entregáveis:**
-  - [ ] Módulo `accounts` (`GET`, `POST`, `PUT /:id`, `DELETE /:id`) com cálculo do saldo atual.
-  - [ ] Módulo `categories` (`GET` com filtro por `type`, `POST`, `PUT /:id`, `DELETE /:id`).
-  - [ ] Validações Zod e proteção contra acesso a registros de terceiros (`404`/`403`) e exclusão com vínculos (`409`).
+  - [x] Módulo `accounts` (`GET`, `POST`, `PUT /:id`, `DELETE /:id`) com cálculo do saldo atual.
+  - [x] Módulo `categories` (`GET` com filtro por `type`, `POST`, `PUT /:id`, `DELETE /:id`).
+  - [x] Validações Zod e proteção contra acesso a registros de terceiros (`404`/`403`) e exclusão com vínculos (`409`).
 - **Critério de Aceite:** Todas as operações CRUD de contas e categorias funcionando via cliente HTTP (Insomnia/Thunder/curl) com isolamento por `userId`.
 - **Commit:** `feat(api): add accounts and categories CRUD endpoints`
 
@@ -306,10 +306,10 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 5 — CRUD de Transações e Filtros por Período
 - **Objetivo:** Permitir registro e consulta filtrada de movimentações financeiras com relacionamentos.
 - **Entregáveis:**
-  - [ ] Módulo `transactions` (`GET`, `POST`, `PUT /:id`, `DELETE /:id`).
-  - [ ] Validação de integridade: conta e categoria devem pertencer ao usuário e o tipo da categoria deve bater com o tipo da transação.
-  - [ ] Filtros por período (`month`/`year` ou `startDate`/`endDate`), `type`, `accountId`, `categoryId`, `search` e paginação.
-  - [ ] Retorno das transações com `account` e `category` populados (`include`).
+  - [x] Módulo `transactions` (`GET`, `POST`, `PUT /:id`, `DELETE /:id`).
+  - [x] Validação de integridade: conta e categoria devem pertencer ao usuário e o tipo da categoria deve bater com o tipo da transação.
+  - [x] Filtros por período (`month`/`year` ou `startDate`/`endDate`), `type`, `accountId`, `categoryId`, `search` e paginação.
+  - [x] Retorno das transações com `account` e `category` populados (`include`).
 - **Critério de Aceite:** Transações impactam corretamente o saldo das contas e todos os filtros combinados retornam os resultados esperados.
 - **Commit:** `feat(api): add transactions CRUD with period filters and balance logic`
 
@@ -318,8 +318,8 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 6 — Endpoints Analíticos do Dashboard
 - **Objetivo:** Fornecer dados agregados prontos para os cards e gráficos do frontend.
 - **Entregáveis:**
-  - [ ] Endpoint `GET /api/dashboard/summary` aceitando filtros de período (`month`/`year` ou `startDate`/`endDate`).
-  - [ ] Agregações retornadas:
+  - [x] Endpoint `GET /api/dashboard/summary` aceitando filtros de período (`month`/`year` ou `startDate`/`endDate`).
+  - [x] Agregações retornadas:
     - `totalBalance`, `periodIncome`, `periodExpense`, `periodBalance`.
     - `expensesByCategory` (nome, cor, total e percentual).
     - `monthlyEvolution` (últimos 6 meses: mês, receitas, despesas).
@@ -332,10 +332,10 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 7 — Setup do Frontend, Tailwind + shadcn/ui e Fluxo de Autenticação
 - **Objetivo:** Estruturar a interface React e conectar o login/cadastro à API.
 - **Entregáveis:**
-  - [ ] Configuração do Tailwind CSS e componentes base do `shadcn/ui` (Button, Input, Card, Dialog, Select, Toast).
-  - [ ] Roteamento (`react-router-dom`) com layout principal (Sidebar/Header responsivo) e `PrivateRoute`.
-  - [ ] `AuthContext` + Axios com interceptor JWT e logout automático em `401`.
-  - [ ] Telas de Login e Cadastro com validação e feedback visual de erros.
+  - [x] Configuração do Tailwind CSS e componentes base do `shadcn/ui` (Button, Input, Card, Dialog, Select, Toast).
+  - [x] Roteamento (`react-router-dom`) com layout principal (Sidebar/Header responsivo) e `PrivateRoute`.
+  - [x] `AuthContext` + Axios com interceptor JWT e logout automático em `401`.
+  - [x] Telas de Login e Cadastro com validação e feedback visual de erros.
 - **Critério de Aceite:** Usuário consegue cadastrar, logar, recarregar a página mantendo a sessão e sair com redirecionamento para `/login`.
 - **Commit:** `feat(web): setup frontend app with auth flow and protected routes`
 
@@ -344,8 +344,8 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 8 — Telas de Contas e Categorias
 - **Objetivo:** Permitir gerenciar contas e categorias pela interface web.
 - **Entregáveis:**
-  - [ ] Página **Contas**: listagem em cards com saldo atual formatado em BRL (`Intl.NumberFormat`), modal de criação/edição e exclusão com confirmação.
-  - [ ] Página **Categorias**: abas/filtros por Receitas e Despesas, badges coloridas, modal de criação/edição e exclusão.
+  - [x] Página **Contas**: listagem em cards com saldo atual formatado em BRL (`Intl.NumberFormat`), modal de criação/edição e exclusão com confirmação.
+  - [x] Página **Categorias**: abas/filtros por Receitas e Despesas, badges coloridas, modal de criação/edição e exclusão.
 - **Critério de Aceite:** Alterações refletem imediatamente no PostgreSQL e atualizam a UI com feedback via toast.
 - **Commit:** `feat(web): implement accounts and categories management pages`
 
@@ -354,10 +354,10 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 9 — Tela de Transações e Filtros por Período
 - **Objetivo:** Construir a tela operacional principal de lançamentos financeiros.
 - **Entregáveis:**
-  - [ ] Tabela responsiva de transações com data, descrição, categoria (badge colorida), conta e valor colorido (verde/vermelho).
-  - [ ] Barra de filtros: seletor de mês/ano (ou intervalo de datas), tipo, conta, categoria e busca textual.
-  - [ ] Modal de criação/edição de transação (filtrando automaticamente as categorias compatíveis com o tipo selecionado).
-  - [ ] Controles de paginação e estados vazios.
+  - [x] Tabela responsiva de transações com data, descrição, categoria (badge colorida), conta e valor colorido (verde/vermelho).
+  - [x] Barra de filtros: seletor de mês/ano (ou intervalo de datas), tipo, conta, categoria e busca textual.
+  - [x] Modal de criação/edição de transação (filtrando automaticamente as categorias compatíveis com o tipo selecionado).
+  - [x] Controles de paginação e estados vazios.
 - **Critério de Aceite:** Usuário consegue criar, filtrar por período, editar e excluir transações sem recarregar a página.
 - **Commit:** `feat(web): implement transactions list, period filters and CRUD modals`
 
@@ -366,11 +366,11 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 10 — Dashboard Interativo com Recharts
 - **Objetivo:** Entregar a visão analítica consolidada das finanças pessoais.
 - **Entregáveis:**
-  - [ ] Seletor de período no topo do Dashboard sincronizado com a API.
-  - [ ] 4 Cards de KPIs (Saldo Total, Receitas, Despesas, Balanço).
-  - [ ] Gráfico **Receitas vs. Despesas por Mês** (`BarChart` responsivo com tooltip formatado em `R$`).
-  - [ ] Gráfico **Despesas por Categoria** (`PieChart` estilo donut com legenda e percentuais).
-  - [ ] Card de **Transações Recentes** com link para ver todas.
+  - [x] Seletor de período no topo do Dashboard sincronizado com a API.
+  - [x] 4 Cards de KPIs (Saldo Total, Receitas, Despesas, Balanço).
+  - [x] Gráfico **Receitas vs. Despesas por Mês** (`BarChart` responsivo com tooltip formatado em `R$`).
+  - [x] Gráfico **Despesas por Categoria** (`PieChart` estilo donut com legenda e percentuais).
+  - [x] Card de **Transações Recentes** com link para ver todas.
 - **Critério de Aceite:** Gráficos renderizam corretamente em desktop e mobile, atualizam ao trocar o período e lidam bem com meses sem lançamentos.
 - **Commit:** `feat(web): build financial dashboard with recharts visualizations`
 
@@ -379,8 +379,8 @@ Para manter o histórico do projeto organizado e fácil de auditar no portfólio
 ### Etapa 11 — Testes Automatizados, Polimento e README Final
 - **Objetivo:** Garantir confiabilidade básica e preparar o repositório para apresentação de portfólio.
 - **Entregáveis:**
-  - [ ] Testes automatizados no backend (Vitest/Supertest) cobrindo autenticação, isolamento por usuário, cálculo de saldo e filtros de período.
-  - [ ] Revisão de responsividade, acessibilidade básica e build de produção (`npm run build`) no backend e frontend.
-  - [ ] `README.md` completo com descrição do projeto, stack, instruções de setup (Docker + Prisma + Front/Back) e screenshots.
+  - [x] Testes automatizados no backend (Vitest/Supertest) cobrindo autenticação, isolamento por usuário, cálculo de saldo e filtros de período.
+  - [x] Revisão de responsividade, acessibilidade básica e build de produção (`npm run build`) no backend e frontend.
+  - [x] `README.md` completo com descrição do projeto, stack, instruções de setup (Docker + Prisma + Front/Back) e screenshots.
 - **Critério de Aceite:** Testes passando, builds sem erros de TypeScript e `README.md` pronto para o GitHub.
 - **Commit:** `test: add core tests and finalize project documentation`
