@@ -2,7 +2,9 @@ import cors from 'cors';
 import express from 'express';
 import { env } from './config/env';
 import { errorHandler } from './middlewares/errorHandler';
+import { accountsRouter } from './modules/accounts/accounts.routes';
 import { authRouter } from './modules/auth/auth.routes';
+import { categoriesRouter } from './modules/categories/categories.routes';
 
 export function createApp() {
   const app = express();
@@ -24,6 +26,8 @@ export function createApp() {
   });
 
   app.use('/api/auth', authRouter);
+  app.use('/api/accounts', accountsRouter);
+  app.use('/api/categories', categoriesRouter);
 
   app.use(errorHandler);
 
