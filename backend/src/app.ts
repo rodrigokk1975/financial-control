@@ -5,6 +5,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import { accountsRouter } from './modules/accounts/accounts.routes';
 import { authRouter } from './modules/auth/auth.routes';
 import { categoriesRouter } from './modules/categories/categories.routes';
+import { transactionsRouter } from './modules/transactions/transactions.routes';
 
 export function createApp() {
   const app = express();
@@ -28,6 +29,7 @@ export function createApp() {
   app.use('/api/auth', authRouter);
   app.use('/api/accounts', accountsRouter);
   app.use('/api/categories', categoriesRouter);
+  app.use('/api/transactions', transactionsRouter);
 
   app.use(errorHandler);
 
