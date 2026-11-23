@@ -1,6 +1,8 @@
 import cors from 'cors';
 import express from 'express';
 import { env } from './config/env';
+import { errorHandler } from './middlewares/errorHandler';
+import { authRouter } from './modules/auth/auth.routes';
 
 export function createApp() {
   const app = express();
@@ -20,6 +22,10 @@ export function createApp() {
       timestamp: new Date().toISOString(),
     });
   });
+
+  app.use('/api/auth', authRouter);
+
+  app.use(errorHandler);
 
   return app;
 }
