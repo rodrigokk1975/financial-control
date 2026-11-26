@@ -30,3 +30,14 @@ Thumbs.db
 
 # Test coverage
 coverage/
+.coverage
+htmlcov/
+
+# Python / Django / pytest / SQLite
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+.pytest_cache/
