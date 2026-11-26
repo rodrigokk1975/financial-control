@@ -24,4 +24,5 @@ urlpatterns = [
     re_path(r"^api/auth/", include("apps.users.urls")),
     re_path(r"^api/", include("apps.accounts.urls")),
     re_path(r"^api/", include("apps.categories.urls")),
+    re_path(r"^api/", include("apps.transactions.urls")),
 ]
