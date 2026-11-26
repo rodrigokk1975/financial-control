@@ -1,14 +1,14 @@
 # FinPulse — Controle de Finanças Pessoais
 
-Aplicação full-stack de **controle de finanças pessoais** construída com **React + TypeScript**, **Node.js + Express + TypeScript**, **Prisma ORM** e **PostgreSQL**, com autenticação **JWT**, gestão de contas, categorias, transações com filtros por período e dashboard analítico interativo com **Recharts**.
+Aplicação full-stack de **controle de finanças pessoais** construída com **React + TypeScript** no frontend e **Python + Django + Django REST Framework (DRF) + SimpleJWT** no backend, com suporte a **PostgreSQL 16** (produção/Docker) e **SQLite local** (desenvolvimento/demo sem Docker), gestão de contas, categorias, transações com filtros por período e dashboard analítico interativo com **Recharts**.
 
-> Planejamento completo de produto, modelagem e etapas disponível em [PRD.md](./PRD.md).
+> Planejamento original de produto e modelagem disponível em [PRD.md](./PRD.md).
 
 ---
 
 ## Principais Funcionalidades
 
-- **Autenticação JWT Segura:** Cadastro (com criação automática de categorias iniciais), login, hash de senha com `bcryptjs`, middleware de proteção e isolamento estrito de dados por usuário.
+- **Autenticação JWT Segura (SimpleJWT):** Cadastro (com criação automática de 6 categorias iniciais), login, hash de senha nativo do Django, proteção de rotas via `Bearer` token e isolamento estrito de dados por usuário.
 - **Gestão de Contas e Carteiras:** CRUD completo de contas (Conta Corrente, Poupança, Cartão de Crédito, Dinheiro, Investimento) com **saldo atual calculado dinamicamente** (`saldo inicial + receitas - despesas`).
 - **Categorias Personalizáveis:** Separação entre Receitas (`INCOME`) e Despesas (`EXPENSE`), com cores identificadoras refletidas nas badges e nos gráficos.
 - **Transações com Filtros Combináveis:** CRUD completo com validação de integridade relacional, filtros por **mês/ano** ou **intervalo personalizado (`startDate`/`endDate`)**, tipo, conta, categoria, busca textual e paginação.
@@ -25,9 +25,9 @@ Aplicação full-stack de **controle de finanças pessoais** construída com **R
 | Camada | Tecnologias |
 | :--- | :--- |
 | **Frontend** | React 19, Vite, TypeScript, Tailwind CSS, Recharts, Lucide Icons, Axios, React Router |
-| **Backend** | Node.js, Express, TypeScript, Zod, JWT (`jsonwebtoken`), `bcryptjs` |
-| **Banco & ORM** | PostgreSQL 16 (Docker Compose), Prisma ORM + Migrations + Seed |
-| **Testes** | Vitest + Supertest |
+| **Backend** | Python 3.12+, Django 5.2, Django REST Framework (DRF), SimpleJWT, `django-cors-headers` |
+| **Banco & ORM** | PostgreSQL 16 (Docker Compose + `psycopg` v3) **ou** SQLite local (sem Docker), Django ORM + Migrations + `seed_demo` |
+| **Testes** | `pytest` + `pytest-django` |
 
 ---
 
@@ -35,27 +35,34 @@ Aplicação full-stack de **controle de finanças pessoais** construída com **R
 
 ```mermaid
 flowchart LR
-    Web["Frontend (React + TS + Recharts)"] -->|"REST JSON + Bearer JWT"| API["Backend (Express + TS + Zod)"]
-    API -->|"Prisma Client"| DB[("PostgreSQL 16 (Docker)")]
+    Web["Frontend (React + TS + Recharts :5173)"] -->|"REST JSON + Bearer JWT"| API["Backend (Django + DRF + SimpleJWT :3333)"]
+    API -->|"DATABASE_URL=postgresql://..."| PG[("PostgreSQL 16 (Docker)")]
+    API -->|"Fallback local sem Docker"| SQLite[("SQLite (db.sqlite3)")]
 ```
 
 ```text
 financial-control/
-├── PRD.md                 # Product Requirements Document e roteiro de etapas
-├── docker-compose.yml     # PostgreSQL 16 com volume persistente e healthcheck
+├── PRD.md                    # Product Requirements Document original
+├── docker-compose.yml        # PostgreSQL 16 com volume persistente e healthcheck
 ├── backend/
-│   ├── prisma/            # schema.prisma, migrations SQL e seed.ts
-│   └── src/
-│       ├── config/        # env e instância singleton do Prisma
-│       ├── middlewares/   # ensureAuthenticated (JWT) e errorHandler
-│       ├── modules/       # auth, accounts, categories, transactions, dashboard
-│       └── __tests__/     # testes unitários e de integração (Vitest + Supertest)
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── pytest.ini
+│   ├── config/               # settings.py (dual PG/SQLite), urls.py e wsgi.py
+│   ├── core/                 # exceptions.py, utils/period.py e management command seed_demo
+│   ├── apps/
+│   │   ├── users/            # Custom User (UUID + email) e /api/auth/*
+│   │   ├── accounts/         # Contas e cálculo de saldo dinâmico
+│   │   ├── categories/       # Categorias INCOME/EXPENSE
+│   │   ├── transactions/     # Transações com filtros combináveis e paginação
+│   │   └── dashboard/        # Agregações analíticas de KPIs e gráficos
+│   └── tests/                # Suíte pytest + pytest-django
 └── frontend/
     └── src/
-        ├── components/    # UI (shadcn-style), layout responsivo e modais
-        ├── contexts/      # AuthContext e ToastContext
-        ├── pages/         # Login, Register, Dashboard, Transactions, Accounts, Categories
-        └── services/      # Cliente Axios com interceptors JWT
+        ├── components/       # UI (shadcn-style), layout responsivo e modais
+        ├── contexts/         # AuthContext e ToastContext
+        ├── pages/            # Login, Register, Dashboard, Transactions, Accounts, Categories
+        └── services/         # Cliente Axios com interceptors JWT
 ```
 
 ---
@@ -63,29 +70,32 @@ financial-control/
 ## Como Executar Localmente
 
 ### Pré-requisitos
-- Node.js 20+ e npm
-- Docker Desktop (para subir o PostgreSQL) **ou** uma URL de PostgreSQL local/nuvem (ex.: Neon, Supabase)
+- Python 3.12+ e Node.js 20+
+- *(Opcional)* Docker Desktop caso deseje usar **PostgreSQL 16** em vez do modo **SQLite local**
 
-### 1. Subir o banco de dados PostgreSQL
-```bash
-docker compose up -d
-```
+### Opção A — Modo Rápido Local com SQLite + Demo (sem Docker)
 
-### 2. Configurar e rodar o Backend
+#### 1. Configurar e rodar o Backend Django
 ```bash
 cd backend
-cp .env.example .env
-npm install
-npx prisma generate
-npx prisma migrate deploy
-npm run prisma:seed
-npm run dev
+python -m venv .venv
+
+# Windows (PowerShell):
+.\.venv\Scripts\Activate.ps1
+# Linux / macOS:
+# source .venv/bin/activate
+
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py seed_demo
+python manage.py runserver 3333
 ```
+Sem `DATABASE_URL` definida, o Django usa automaticamente `backend/db.sqlite3`.
 A API iniciará em `http://localhost:3333/api` (healthcheck em `GET /api/health`).
 
-> **Credenciais do seed de demonstração:** `demo@finpulse.dev` / `123456` (com 6 meses de movimentações realistas).
+> **Credenciais do seed de demonstração:** `demo@finpulse.dev` / `123456` (com 3 contas, 8 categorias e 6 meses de movimentações realistas).
 
-### 3. Configurar e rodar o Frontend
+#### 2. Configurar e rodar o Frontend
 Em outro terminal:
 ```bash
 cd frontend
@@ -97,14 +107,33 @@ Acesse a interface em `http://localhost:5173`.
 
 ---
 
+### Opção B — Com PostgreSQL 16 (Docker Compose)
+
+1. Suba o banco PostgreSQL na raiz do projeto:
+   ```bash
+   docker compose up -d
+   ```
+2. Em `backend/`, copie `.env.example` para `.env` e descomente `DATABASE_URL`:
+   ```env
+   DATABASE_URL=postgresql://postgres:postgres@localhost:5432/financial_control
+   ```
+3. Execute as migrations, o seed e o servidor:
+   ```bash
+   python manage.py migrate
+   python manage.py seed_demo
+   python manage.py runserver 3333
+   ```
+
+---
+
 ## Testes e Build de Produção
 
 ```bash
-# Testes automatizados do backend (Vitest + Supertest)
-npm --prefix backend test
+# Testes automatizados do backend (pytest + pytest-django, roda sem Docker)
+cd backend && .\.venv\Scripts\pytest.exe
 
-# Build TypeScript do backend
-npm --prefix backend run build
+# Verificação do projeto Django
+cd backend && .\.venv\Scripts\python.exe manage.py check
 
 # Build de produção do frontend
 npm --prefix frontend run build
