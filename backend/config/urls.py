@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from django.urls import re_path
+from django.urls import include, re_path
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -21,4 +21,5 @@ def health_view(_request):
 
 urlpatterns = [
     re_path(r"^api/health/?$", health_view, name="health"),
+    re_path(r"^api/auth/", include("apps.users.urls")),
 ]
