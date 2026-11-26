@@ -22,4 +22,6 @@ def health_view(_request):
 urlpatterns = [
     re_path(r"^api/health/?$", health_view, name="health"),
     re_path(r"^api/auth/", include("apps.users.urls")),
+    re_path(r"^api/", include("apps.accounts.urls")),
+    re_path(r"^api/", include("apps.categories.urls")),
 ]
