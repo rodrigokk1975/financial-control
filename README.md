@@ -20,6 +20,17 @@ Aplicação full-stack de **controle de finanças pessoais** construída com **R
 
 ---
 
+## Migração do Backend (Node/Express/Prisma → Python/Django/DRF)
+
+O backend foi migrado integralmente de **Node.js + Express + Prisma + Vitest** para **Python + Django + Django REST Framework (DRF) + SimpleJWT + pytest**, preservando 100% dos contratos HTTP/JSON consumidos pelo frontend React + TypeScript:
+
+- **Compatibilidade total de contrato:** URLs sem barra final na porta `3333`, payloads em `camelCase`, valores monetários serializados como números JSON e tratamento de erros padronizado (`{ "message": "...", "errors"?: {...} }`).
+- **Autenticação & Segurança:** Modelo `User` customizado com UUID e login por e-mail integrado ao `djangorestframework-simplejwt` (`Bearer` JWT) e isolamento estrito de dados por usuário.
+- **Banco de Dados Dual (PostgreSQL + SQLite):** Pronto para **PostgreSQL 16** via `DATABASE_URL` (`psycopg` v3 + Docker Compose), com fallback automático para **SQLite local** e comando idempotente `python manage.py seed_demo` para testar sem Docker.
+- **Testes Automatizados:** Suíte completa com `pytest` + `pytest-django` cobrindo autenticação, contas, categorias, transações, filtros por período e dashboard analítico.
+
+---
+
 ## Stack Tecnológica
 
 | Camada | Tecnologias |
